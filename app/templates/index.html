@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToxiGuard AI | Toxicity Prediction</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --primary: #4361ee;
+            --primary-hover: #3a56d4;
+            --text-main: #f8f9fa;
+            --text-muted: #a0aec0;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body, html {
+            min-height: 100%;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(67, 97, 238, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(239, 68, 68, 0.1), transparent 25%);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            overflow-x: hidden;
+            background-attachment: fixed;
+        }
+
+        .navbar {
+            background: rgba(11, 15, 25, 0.8) !important;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 15px 0;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-control, .form-control:read-only, .form-control:disabled {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            border-radius: 8px;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+            color: #fff;
+        }
+
+        .form-control::placeholder {
+            color: #6b7280;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4361ee, #3a56d4);
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.5);
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline-primary {
+            color: #fff;
+            border-color: var(--glass-border);
+            background: rgba(255,255,255,0.02);
+        }
+        
+        .btn-outline-primary:hover {
+            background: rgba(67, 97, 238, 0.15);
+            color: #fff;
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        /* Result Colors */
+        .text-danger { color: var(--danger) !important; }
+        .text-success { color: var(--success) !important; }
+        .bg-danger { background-color: var(--danger) !important; }
+        .bg-success { background-color: var(--success) !important; }
+        .bg-warning { background-color: var(--warning) !important; }
+        
+        /* Typography overrides */
+        .text-muted { color: var(--text-muted) !important; }
+
+        /* Badges */
+        .badge.bg-danger { background-color: rgba(239, 68, 68, 0.2) !important; color: #fca5a5 !important; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge.bg-success { background-color: rgba(16, 185, 129, 0.2) !important; color: #6ee7b7 !important; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+        /* Table Dashboard */
+        .table {
+            color: var(--text-main);
+            border-color: var(--glass-border);
+        }
+        .table thead th {
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .table tbody td {
+            border-color: var(--glass-border);
+            background: transparent;
+            vertical-align: middle;
+        }
+        .table-hover tbody tr:hover td {
+            background-color: rgba(255, 255, 255, 0.03);
+            color: #fff;
+        }
+
+        .progress {
+            background-color: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+
+        .img-fluid {
+            border-radius: 10px;
+            opacity: 0.95;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar border-bottom mb-4">
+    <div class="container d-flex justify-content-between align-items-center">
+        <a class="navbar-brand text-white fw-bold d-flex align-items-center gap-2" href="/">
+            <i class="bi bi-heptagon-half text-primary fs-3"></i>
+            ToxiGuard AI
+        </a>
+        <div class="text-muted small">
+            AI-Powered Pharmacological Validation
+        </div>
+    </div>
+</nav>
+
+<div class="container pb-5">
+    
+    {% if error %}
+    <div class="alert alert-danger border-0 glass-card d-flex align-items-center gap-2 mb-4" role="alert" style="background: rgba(239, 68, 68, 0.1);">
+        <i class="bi bi-exclamation-triangle-fill"></i> {{ error }}
+    </div>
+    {% endif %}
+
+    <div class="row g-4 d-flex align-items-stretch">
+        <!-- Left Panel: Input Forms -->
+        <div class="col-lg-4">
+            <div class="glass-card p-4">
+                <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                    <i class="bi bi-search text-primary"></i> Sequence Input
+                </h5>
+                
+                <form action="/predict" method="post" class="mb-4">
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">SMILES Representation</label>
+                        <input type="text" class="form-control" name="smiles" 
+                               placeholder="e.g. CCO or c1ccccc1" required
+                               value="{{ smiles if smiles else '' }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 d-flex justify-content-center align-items-center gap-2">
+                        <i class="bi bi-lightning-charge-fill"></i> Predict Toxicity
+                    </button>
+                </form>
+
+                <hr class="border-secondary my-4" style="opacity: 0.2">
+                
+                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-file-earmark-spreadsheet text-primary"></i> Batch Analysis
+                </h5>
+                <p class="text-muted small mb-3">Upload a CSV containing a 'SMILES' column for high-throughput screening.</p>
+                <form action="/predict_batch" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <input class="form-control" type="file" name="file" accept=".csv" required>
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary w-100 d-flex justify-content-center align-items-center gap-2">
+                        <i class="bi bi-cloud-arrow-up"></i> Process CSV
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Panel: Results & Explainability -->
+        <div class="col-lg-8">
+            {% if result %}
+                <!-- Single Prediction Result -->
+                <div class="glass-card p-4 h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="fw-bold mb-0">Inference Timeline</h4>
+                        <span class="badge {{ 'bg-danger' if result == 'Toxic ⚠️' else 'bg-success' }} fs-6 px-3 py-2 rounded-pill">
+                            {{ result }}
+                        </span>
+                    </div>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="p-3 rounded h-100" style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);">
+                                <div class="text-muted small mb-1">Target Sequence (SMILES)</div>
+                                <div class="font-monospace text-wrap" style="color: #e2e8f0; word-break: break-all;">{{ smiles }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded h-100" style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-muted small">Toxicity Probability Score</span>
+                                    <span class="fw-bold">{{ score }}%</span>
+                                </div>
+                                <div class="progress mb-2" style="height: 8px;">
+                                    {% set pcolor = 'bg-danger' if score > 70 else ('bg-warning' if score >= 40 else 'bg-success') %}
+                                    <div class="progress-bar {{ pcolor }}" role="progressbar" style="width: {{ score }}%;"></div>
+                                </div>
+                                <div class="text-end text-muted small">Risk Tier: <strong class="text-white">{{ explanation }}</strong></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic SHAP Insight -->
+                    {% if dynamic_shap_base64 %}
+                    <div class="mt-4 pt-4 border-top" style="border-color: var(--glass-border) !important;">
+                        <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                            <i class="bi bi-bar-chart-fill text-primary"></i> Local Feature Explainability (SHAP)
+                        </h5>
+                        <p class="text-muted small mb-3">Identified key molecular descriptors contributing significantly to this specific classification output.</p>
+                        <div class="text-center rounded border p-3" style="background: rgba(0,0,0,0.2); border-color: var(--glass-border) !important;">
+                            <img src="data:image/png;base64,{{ dynamic_shap_base64 }}" class="img-fluid" alt="Dynamic SHAP interpretation" style="max-height: 280px;">
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            {% elif batch_results %}
+                <!-- Batch Results -->
+                <div class="glass-card p-4 h-100">
+                    <h4 class="fw-bold mb-4 d-flex align-items-center gap-2">
+                        <i class="bi bi-grid-3x3-gap-fill text-primary"></i> High-Throughput Results
+                    </h4>
+                    <div class="table-responsive rounded border border-secondary" style="border-color: var(--glass-border) !important; max-height: 500px; overflow-y: auto;">
+                        <table class="table table-hover mb-0">
+                            <thead style="position: sticky; top: 0; background: #131926; z-index: 10;">
+                                <tr>
+                                    <th>SMILES Structure</th>
+                                    <th>Classification</th>
+                                    <th>Risk Score</th>
+                                    <th>Tier Assessment</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for r in batch_results %}
+                                <tr>
+                                    <td class="font-monospace" style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ r.smiles }}">
+                                        {{ r.smiles }}
+                                    </td>
+                                    <td>
+                                        <span class="badge {{ 'bg-danger' if r.result == 'Toxic ⚠️' else 'bg-success' }}">
+                                            {{ r.result }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span>{{ r.score }}{% if r.score != 'N/A' %}%{% endif %}</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-muted">{{ r.explanation }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Default Placeholder/Global Data -->
+                <div class="glass-card p-4 h-100">
+                    <h4 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-activity text-primary"></i> System Analytics Hub
+                    </h4>
+                    <p class="text-muted mb-4 small">Waiting for sequence input. Review structural distributions and global feature impacts below.</p>
+                    
+                    <div class="row g-3 h-100">
+                        <div class="col-md-6 mb-3">
+                            <div class="rounded border p-3 h-100 pb-0" style="border-color: var(--glass-border) !important; background: rgba(0,0,0,0.1);">
+                                <h6 class="fw-bold text-muted mb-2 small text-center">ZINC250k Lipophilicity (logP)</h6>
+                                <img src="{{ url_for('static', filename='zinc_logp.png') }}" class="img-fluid mb-2" alt="ZINC logP">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="rounded border p-3 h-100 pb-0" style="border-color: var(--glass-border) !important; background: rgba(0,0,0,0.1);">
+                                <h6 class="fw-bold text-muted mb-2 small text-center">Global Structure Importance</h6>
+                                <img src="{{ url_for('static', filename='shap_summary.png') }}" class="img-fluid mb-2" alt="Dataset Summary">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
