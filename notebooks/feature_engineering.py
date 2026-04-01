@@ -1,8 +1,7 @@
 import pandas as pd
 import numpy as np
 from rdkit import Chem
-from rdkit.Chem import Descriptors
-from rdkit.Chem import AllChem
+from rdkit.Chem import Descriptors, AllChem, MACCSkeys
 
 df = pd.read_csv('data/cleaned_tox21.csv')
 
@@ -21,10 +20,15 @@ def featurize(smiles):
         Descriptors.TPSA(mol)
     ]
 
-    fp = AllChem.GetMorganFingerprintAsBitVect(mol, 2, nBits=1024)
+    # Enhanced Morgan Fingerprint
+    fp = AllChem.GetMorganFingerprintAsBitVect(mol, 3, nBits=2048)
     fp_array = np.array(fp)
+    
+    # MACCS Keys
+    maccs = MACCSkeys.GenMACCSKeys(mol)
+    maccs_array = np.array(maccs)
 
-    return np.concatenate([features, fp_array])
+    return np.concatenate([features, fp_array, maccs_array])
 
 
 X = []

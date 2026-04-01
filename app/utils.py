@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import joblib
 from rdkit import Chem
-from rdkit.Chem import Descriptors, AllChem
+from rdkit.Chem import Descriptors, AllChem, MACCSkeys
 import shap
 import matplotlib
 matplotlib.use('Agg')
@@ -74,12 +74,16 @@ def featurize(smiles):
             Descriptors.TPSA(mol)
         ]
 
-        # Extract Morgan Fingerprints
-        fp = AllChem.GetMorganFingerprintAsBitVect(mol, 2, nBits=1024)
+        # Enhanced Morgan Fingerprint
+        fp = AllChem.GetMorganFingerprintAsBitVect(mol, 3, nBits=2048)
         fp_array = np.array(fp)
 
+        # MACCS Keys
+        maccs = MACCSkeys.GenMACCSKeys(mol)
+        maccs_array = np.array(maccs)
+
         # Concatenate array and reshape for the ML model input
-        return np.concatenate([features, fp_array]).reshape(1, -1)
+        return np.concatenate([features, fp_array, maccs_array]).reshape(1, -1)
     except Exception as e:
         logging.error(f"Error featurizing SMILES '{smiles}': {e}")
         return None
@@ -138,7 +142,7 @@ def generate_shap_plot(features):
             sv = shap_values[0]
             base_val = explainer.expected_value
             
-        feature_names = ['MolWt', 'LogP', 'H-Donors', 'H-Acceptors', 'TPSA'] + [f'FP_{i}' for i in range(1024)]
+        feature_names = ['MolWt', 'LogP', 'H-Donors', 'H-Acceptors', 'TPSA'] + [f'FP_{i}' for i in range(2048)] + [f'MACCS_{i}' for i in range(167)]
         
         plt.figure(figsize=(10, 3))
         # Use shap.plots.waterfall or a custom bar plot if waterfall is not perfectly compatible
