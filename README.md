@@ -43,13 +43,13 @@ ToxiGuard AI tackles this by framing toxicity prediction as a machine learning c
 
 | Single Prediction Interface | Batch Results Dashboard | Model Explainability (SHAP) |
 |:---:|:---:|:---:|
-| ![Single Prediction](https://via.placeholder.com/400x250?text=Single+Prediction) | ![Batch CSV Upload](https://via.placeholder.com/400x250?text=Batch+CSV+Upload) | ![SHAP Summary Plot](https://via.placeholder.com/400x250?text=SHAP+Summary+Plot) |
+| ![Single Prediction](app/static/screenshots/single_prediction.png) | ![Batch CSV Upload](app/static/screenshots/batch_prediction.png) | ![SHAP Summary Plot](app/static/shap_summary.png) |
 
 ## 🚀 Installation Steps
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com//ToxiGuard-AI.git
+   git clone https://github.com/dkv204p/ToxiGuard-AI.git
    cd ToxiGuard-AI
    ```
 
