@@ -36,14 +36,29 @@ It supports:
 
 ---
 
+## 📊 Model Performance
+
+- **Accuracy:** 94%  
+- **Model Used:** XGBoost  
+- **Dataset:** Jigsaw Toxic Comment Dataset  
+
+---
+
+## 🧠 How It Works
+
+1. Input text from user  
+2. Text preprocessing (cleaning, tokenization)  
+3. Feature extraction using TF-IDF  
+4. Prediction using trained XGBoost model  
+5. Explainability using SHAP values  
+
+---
+
 ## 🖼️ Project Screenshots
 
 | Single Prediction | Batch Results | SHAP Explainability |
 |:---:|:---:|:---:|
 | ![](app/static/screenshots/single_prediction.png) | ![](app/static/screenshots/batch_prediction.png) | ![](app/static/shap_summary.png) |
-
----
-
 ## 🏗️ Tech Stack
 
 - **Frontend:** HTML, CSS  
@@ -59,7 +74,6 @@ It supports:
 ```bash
 git clone https://github.com/shraddhajain0989/ToxiGuard-AI.git
 cd ToxiGuard-AI
-
 2️⃣ Create Virtual Environment
 python -m venv venv
 venv\Scripts\activate
