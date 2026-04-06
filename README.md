@@ -57,5 +57,13 @@ It supports:
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/YOUR-USERNAME/ToxiGuard-AI.git
+git clone https://github.com/shraddhajain0989/ToxiGuard-AI.git
 cd ToxiGuard-AI
+
+2️⃣ Create Virtual Environment
+python -m venv venv
+venv\Scripts\activate
+3️⃣ Install Dependencies
+pip install -r requirements.txt
+4️⃣ Run the Application
+python app.py
