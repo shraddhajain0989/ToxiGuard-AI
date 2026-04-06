@@ -7,7 +7,7 @@
 ![Status](https://img.shields.io/badge/Status-Active-success)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
----
+--
 
 ## 👩‍💻 Developed By
 **Shraddha Jain**  
